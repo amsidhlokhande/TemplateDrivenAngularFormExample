@@ -1,0 +1,68 @@
+<div class="container-fluid">
+  <h1 align="center"><u> BootCamp Registration </u></h1>
+  <div class="alert alert-danger" *ngIf="errorMessage">
+    {{errorMessage}}
+  </div>
+  <form #userForm="ngForm" *ngIf="!submitted" (ngSubmit)="registerUser()">
+    <div class="alert alert-danger" *ngIf="userForm.form.invalid">
+      {{userForm.form.invalid}}
+    </div>
+    <div class="form-group">
+      <label>Name</label>
+      <input #username="ngModel" required type="text" name="userName"
+             [class.is-invalid]="username.invalid && username.touched" class="form-control" [(ngModel)]="user.username">
+      <small class="text-danger" [class.d-none]="username.valid || username.untouched"> Name is required</small>
+    </div>
+    <div class="form-group">
+      <label>EmailId</label>
+      <input type="email" name="emailId" class="form-control" [(ngModel)]="user.emailId">
+    </div>
+    <div class="form-group">
+      <label>Mobile Number</label>
+      <input type="tel" #phone="ngModel" required pattern="^\d{10}$" [class.is-invalid]="phone.invalid && phone.touched"
+             name="mobileNumber" class="form-control" [(ngModel)]="user.contactNumber">
+      <!--<small class="text-danger" [class.d-none]="phone.valid || phone.untouched"> Phone number must be 10 digit and required </small>class-->
+      <div *ngIf="phone.errors && (phone.invalid || phone.touched)">
+        <small class="text-danger" *ngIf="phone.errors.required">Phone number is required</small>
+        <small class="text-danger" *ngIf="phone.errors.pattern">Phone number must be 10 digit</small>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Select Interested Topics </label>
+      <select #topic="ngModel" class="custom-select" (blur)="validateTopic(topic.value)"
+              (change)="validateTopic(topic.value)"
+              [class.is-invalid]="topicHasError && topic.touched" name="topic"
+              [(ngModel)]="user.topic">
+        <option value="default">I am interested in</option>
+        <option *ngFor="let topic of topics">{{topic}}</option>
+      </select>
+      touched {{topic.touched}}
+      Has Error {{topicHasError}}
+      final {{topicHasError && topic.touched}}
+
+      <div class="text-danger" *ngIf="topicHasError && topic.touched"> Topic is required</div>
+
+    </div>
+
+    <div class="mb-3">
+      <label>Time Preference</label>
+      <div class="form-check">
+        <input type="radio" class="form-check-input" name="timePreference" value="morning"
+               [(ngModel)]="user.batchTiming">
+        <label class="form-check-label">8:00AM to 12:00AM</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="timePreference" value="evening"
+               [(ngModel)]="user.batchTiming">
+        <label class="form-check-label">5:00PM to 11:00PM</label>
+      </div>
+    </div>
+
+    <div class="form-check mb-3">
+      <input class="form-check-input" name="subscribe" type="checkbox" [(ngModel)]="user.isSubscribed">
+      <label class="form-check-label">Send me promotional offer</label>
+    </div>
+    <button [disabled]="userForm.form.invalid || topicHasError" class="btn btn-primary" type="submit">Register</button>
+  </form>
+</div>
